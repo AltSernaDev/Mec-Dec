@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraControl : MonoBehaviour
 {
@@ -8,16 +10,22 @@ public class CameraControl : MonoBehaviour
     public float mouseSensivity;
     float xAxisClamp=0;
     public Transform playerBody;
+    public bool canMoveCam = true;
+    public static CameraControl camControlCode;
 
     private void Awake()
     {
         LockCursor();
+        camControlCode = this;
     }
 
 
     void Update()
     {
-        CameraRotation();
+        if (canMoveCam)
+        {
+            CameraRotation();
+        }
     }
 
     void LockCursor()
