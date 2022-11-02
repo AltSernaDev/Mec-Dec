@@ -51,7 +51,7 @@ public class ScreenshotHandler : MonoBehaviour {
 
             Directory.CreateDirectory(Application.streamingAssetsPath + "/Photos");
 
-            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + LifeTimeMananger.instance.DaysPassed.Days.ToString() + "_" + FileCounter + ".png", byteArray);
+            File.WriteAllBytes(Application.streamingAssetsPath + FileCounter + ".png", byteArray);
             Debug.Log("Saved CameraScreenshot.png");
             FileCounter++;
             PlayerPrefs.SetInt("photoNum", FileCounter);
