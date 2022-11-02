@@ -20,7 +20,6 @@ public class LevantarCam : MonoBehaviour
             canChange = false;
             if (camArriba)
             {
-                Debug.Log("Entro aqui");
                 gameObject.transform.DOMove(downTransform.position, 0.8f);
                 //gameObject.transform.position = downTransform.position;
                 //canChange = false;
@@ -30,7 +29,6 @@ public class LevantarCam : MonoBehaviour
             }
             else
             {
-                Debug.Log("y entro aqui tambien");
                 gameObject.transform.DOMove(upTransform.position, 0.8f);
                 //gameObject.transform.position = upTransform.position;
                 //canChange = false;
