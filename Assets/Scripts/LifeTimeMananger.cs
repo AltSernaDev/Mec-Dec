@@ -42,14 +42,13 @@ public class LifeTimeMananger : MonoBehaviour
     {
         if (!manual)
             setCurrentHour();
-        else;
     }
 
-    void lookForSaves()
+    void lookForSaves() 
     {
-        if (PlayerPrefs.GetString("startDay") != null)
+        if (PlayerPrefs.HasKey("startDay"))
         {
-            long temp = Convert.ToInt64(PlayerPrefs.GetString("startDay"));
+            long temp = (long)Convert.ToInt64(PlayerPrefs.GetString("startDay"));
             startDay = DateTime.FromBinary(temp);
             print(startDay);
         }

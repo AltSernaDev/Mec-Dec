@@ -14,11 +14,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenshotHandler : MonoBehaviour {
 
     private static ScreenshotHandler instance;
     public int FileCounter = 0;
+    public Transform quadArrey;
 
     private Camera myCamera;
     private bool takeScreenshotOnNextFrame;
@@ -26,6 +28,8 @@ public class ScreenshotHandler : MonoBehaviour {
     private void Awake() {
         instance = this;
         myCamera = gameObject.GetComponent<Camera>();
+
+        //PlayerPrefs.DeleteKey("photoNum");
     }
     private void Update()
     {
@@ -33,12 +37,18 @@ public class ScreenshotHandler : MonoBehaviour {
         {
             TakeScreenshot_Static(500, 500);
         }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadImg(); 
+        
+        }
     }
 
     private void OnPostRender() {
         if (takeScreenshotOnNextFrame) {
             takeScreenshotOnNextFrame = false;
-            if (PlayerPrefs.HasKey("photoNum"))
+            
+            if (PlayerPrefs.HasKey("photoNum")) ;
                 FileCounter = PlayerPrefs.GetInt("photoNum");
 
             RenderTexture renderTexture = myCamera.targetTexture;
@@ -51,10 +61,10 @@ public class ScreenshotHandler : MonoBehaviour {
 
             Directory.CreateDirectory(Application.streamingAssetsPath + "/Photos");
 
-            File.WriteAllBytes(Application.streamingAssetsPath + FileCounter + ".png", byteArray);
+            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + FileCounter + ".png", byteArray);
             Debug.Log("Saved CameraScreenshot.png");
             FileCounter++;
-            PlayerPrefs.SetInt("photoNum", FileCounter);
+            PlayerPrefs.SetInt("photoNum", FileCounter);            
 
             RenderTexture.ReleaseTemporary(renderTexture);
             myCamera.targetTexture = null;
@@ -68,5 +78,16 @@ public class ScreenshotHandler : MonoBehaviour {
 
     public static void TakeScreenshot_Static(int width, int height) {
         instance.TakeScreenshot(width, height);
+    }
+
+    public void LoadImg()
+    {       
+        for (int i = 0; i < FileCounter + 1; i++)
+        {
+            byte[] byteTemp = File.ReadAllBytes(Application.streamingAssetsPath + "/Photos/" + i + ".png");
+            Texture2D textureTemp = new Texture2D(500, 500);
+            textureTemp.LoadImage(byteTemp);
+            quadArrey.GetChild(i).GetComponent<Renderer>().material.mainTexture = textureTemp;
+        }
     }
 }
