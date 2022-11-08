@@ -23,17 +23,22 @@ public class ScreenshotHandler : MonoBehaviour {
     public Transform quadArrey;
 
     private Camera myCamera;
+    private Camera main_;
     private bool takeScreenshotOnNextFrame;
+
+    [SerializeField] bool reset_;
 
     private void Awake() {
         instance = this;
         myCamera = gameObject.GetComponent<Camera>();
+        main_ = Camera.main;
 
-        //PlayerPrefs.DeleteKey("photoNum");
+        if (reset_)
+            PlayerPrefs.DeleteKey("photoNum");
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && myCamera.gameObject.activeSelf)
         {
             TakeScreenshot_Static(500, 500);
         }
@@ -48,7 +53,7 @@ public class ScreenshotHandler : MonoBehaviour {
         if (takeScreenshotOnNextFrame) {
             takeScreenshotOnNextFrame = false;
             
-            if (PlayerPrefs.HasKey("photoNum")) ;
+            if (PlayerPrefs.HasKey("photoNum")) 
                 FileCounter = PlayerPrefs.GetInt("photoNum");
 
             RenderTexture renderTexture = myCamera.targetTexture;
@@ -68,6 +73,9 @@ public class ScreenshotHandler : MonoBehaviour {
 
             RenderTexture.ReleaseTemporary(renderTexture);
             myCamera.targetTexture = null;
+            
+            myCamera.gameObject.SetActive(false);
+            Invoke("ReActiveCamera", 1f);
         }
     }
 
@@ -89,5 +97,10 @@ public class ScreenshotHandler : MonoBehaviour {
             textureTemp.LoadImage(byteTemp);
             quadArrey.GetChild(i).GetComponent<Renderer>().material.mainTexture = textureTemp;
         }
+    }
+
+    void ReActiveCamera()
+    {
+        myCamera.gameObject.SetActive(true);
     }
 }
