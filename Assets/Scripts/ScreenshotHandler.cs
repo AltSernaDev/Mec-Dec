@@ -24,6 +24,7 @@ public class ScreenshotHandler : MonoBehaviour {
 
     private Camera myCamera;
     private Camera main_;
+    private RenderTexture textureCam;
     private bool takeScreenshotOnNextFrame;
 
     [SerializeField] bool reset_;
@@ -32,6 +33,7 @@ public class ScreenshotHandler : MonoBehaviour {
         instance = this;
         myCamera = gameObject.GetComponent<Camera>();
         main_ = Camera.main;
+        textureCam = myCamera.targetTexture;
 
         if (reset_)
             PlayerPrefs.DeleteKey("photoNum");
@@ -66,7 +68,7 @@ public class ScreenshotHandler : MonoBehaviour {
 
             Directory.CreateDirectory(Application.streamingAssetsPath + "/Photos");
 
-            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + FileCounter + ".png", byteArray);
+            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + LifeTimeMananger.instance.CurrentHour.Day.ToString() + "-" + LifeTimeMananger.instance.CurrentHour.Month.ToString() + "-2004_" + (FileCounter + 1) + ".png", byteArray);
             Debug.Log("Saved CameraScreenshot.png");
             FileCounter++;
             PlayerPrefs.SetInt("photoNum", FileCounter);            
@@ -92,7 +94,7 @@ public class ScreenshotHandler : MonoBehaviour {
     {       
         for (int i = 0; i < FileCounter + 1; i++)
         {
-            byte[] byteTemp = File.ReadAllBytes(Application.streamingAssetsPath + "/Photos/" + i + ".png");
+            byte[] byteTemp = File.ReadAllBytes(Application.streamingAssetsPath + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Day) + "-" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Month).ToString() + "-2004_" + (i + 1) + ".png");
             Texture2D textureTemp = new Texture2D(500, 500);
             textureTemp.LoadImage(byteTemp);
             quadArrey.GetChild(i).GetComponent<Renderer>().material.mainTexture = textureTemp;
@@ -102,5 +104,6 @@ public class ScreenshotHandler : MonoBehaviour {
     void ReActiveCamera()
     {
         myCamera.gameObject.SetActive(true);
+        myCamera.targetTexture = textureCam;
     }
 }
