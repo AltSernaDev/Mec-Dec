@@ -14,12 +14,16 @@ public class LifeTimeMananger : MonoBehaviour
 
     [Header("Current Hour")]
     private DateTime currentHour;
-    [SerializeField] int hours;
-    [SerializeField] int minutes;
-    [SerializeField] int seconds;
+    private int seconds;
+    private int hours;
+    private int minutes;
 
     public TimeSpan DaysPassed { get => daysPassed; }
     public DateTime CurrentHour { get => currentHour; }
+    public DateTime StartDay { get => startDay; }
+    public int Hours { get => hours; }
+    public int Minutes { get => minutes; }
+    public int Seconds { get => seconds; }
 
     private void Awake()
     {
