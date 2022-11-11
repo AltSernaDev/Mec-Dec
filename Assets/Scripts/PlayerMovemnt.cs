@@ -7,6 +7,14 @@ public class PlayerMovemnt : MonoBehaviour
     CharacterController chController;
     public float movementSpeed;
     float ActualSpeed;
+    private Vector3 forwardMovement;
+    private Vector3 rightMovement;
+    private Vector3 Move;
+    private float horiInput;
+    private float vertInput;
+    [SerializeField] private float speedMultiplier;
+    [SerializeField] private float grav;
+    
 
     private void Start()
     {
@@ -19,25 +27,28 @@ public class PlayerMovemnt : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
-            movementSpeed = movementSpeed * 2;
+            movementSpeed = movementSpeed * speedMultiplier;
         }
 
         if(Input.GetKeyUp(KeyCode.LeftShift))
         {
-            movementSpeed = movementSpeed / 2;
+            movementSpeed = movementSpeed / speedMultiplier;
 
         }
     }
 
     void PlayerMovement()
     {
-        float horiInput = Input.GetAxisRaw("Horizontal") * movementSpeed * Time.deltaTime;
-        float vertInput = Input.GetAxisRaw("Vertical") * movementSpeed * Time.deltaTime;
+        horiInput = Input.GetAxisRaw("Horizontal") * Time.deltaTime;
+        vertInput = Input.GetAxisRaw("Vertical") * Time.deltaTime;
+        if (chController.isGrounded)
+        {
+            Move = new Vector3(horiInput,0,vertInput);
+            Move = transform.TransformDirection(Move) * movementSpeed;
+        }
 
-        Vector3 forwardMovement = transform.forward * vertInput;
-        Vector3 rightMovement = transform.right * horiInput;
-
-        chController.SimpleMove(forwardMovement + rightMovement);
+        Move.y -= grav * Time.deltaTime;
+        chController.Move(Move);
     }
 
 }
