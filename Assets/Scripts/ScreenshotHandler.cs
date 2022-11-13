@@ -39,15 +39,18 @@ public class ScreenshotHandler : MonoBehaviour {
             PlayerPrefs.DeleteKey("photoNum");
     }
     private void Update()
-    {
+    {    
         if (Input.GetKeyDown(KeyCode.Space) && myCamera.gameObject.activeSelf)
         {
-            TakeScreenshot_Static(500, 500);
+            if (!(LifeTimeMananger.instance.DaysPassed.Days >= (int)(FileCounter / 3)))
+            {
+                TakeScreenshot_Static(500, 500);
+                transform.GetChild(0).gameObject.SetActive(true);
+            }
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
-            LoadImg(); 
-        
+            LoadImg();         
         }
     }
 
