@@ -15,22 +15,30 @@ public class LifeTimeMananger : MonoBehaviour
     public enum State
     {
         Morning, //6am
-        Noon, //12pm
-        Afternoon, //4pm
-        Night //7pm
+        Afternoon, //12pm
+        Night //6pm
     }
     public State dayTimeState;                   // mi rey a este enlazas los evento que quieras
 
     [Header("Current Hour")]
-    private DateTime currentHour;
-    private int seconds;
-    private int hours;
-    private int minutes;
+    private DateTime currentHour;  // count the day 0
+    [SerializeField] private int seconds, hours, minutes;
 
     [Header("Doors")]
     [SerializeField] GameObject day1Door;
+    [SerializeField] GameObject day1DoorBlock;
     [SerializeField] GameObject day2Door;
+    [SerializeField] GameObject day2DoorBlock;
     [SerializeField] GameObject day3Door;
+    [SerializeField] GameObject day3DoorBlock;
+
+    [Header("Objs")]
+    [SerializeField] GameObject day1Objs;
+    [SerializeField] GameObject day2Objs;
+    [SerializeField] GameObject day3Objs;
+    [SerializeField] List<GameObject> MorningObj;
+    [SerializeField] List<GameObject> AfterNoonObj;
+    [SerializeField] List<GameObject> NightObj;
 
     public TimeSpan DaysPassed { get => daysPassed; }
     public DateTime CurrentHour { get => currentHour; }
@@ -60,23 +68,53 @@ public class LifeTimeMananger : MonoBehaviour
         switch (daysPassed.Days + 1)
         {
             case 1:
-                day1Door.SetActive(false);
+                day1Door.SetActive(false); //por aqui rotas las puertas 
+                day1DoorBlock.SetActive(false); //TEMP (temp si lo quieres cambiar xd) machete ante el sueño 
+                Destroy(day2Objs);
+                Destroy(day3Objs);
                 break;
             case 2:
                 day2Door.SetActive(false);
+                day2DoorBlock.SetActive(false);
+                Destroy(day1Objs);
+                Destroy(day3Objs);
                 break;
             case 3:
                 day3Door.SetActive(false);
-                break;
-            default:
+                day3DoorBlock.SetActive(false);
+                Destroy(day1Objs);
+                Destroy(day2Objs);
                 break;
         }
+        CheckObjs();
+        //Invoke("CheckObjs", 1);
     }
     private void Update()
     {
         if (!manual)
             setCurrentHour();
-        dayTimeState = DayTimeStateMachine(hours);
+        ObjStateManager(DayTimeStateMachine(hours));
+    }
+    
+    void CheckObjs()
+    {
+        StartCoroutine(CheckList(MorningObj));
+        StartCoroutine(CheckList(AfterNoonObj));
+        StartCoroutine(CheckList(NightObj));
+    }
+    IEnumerator CheckList(List<GameObject> list)
+    {
+        yield return null;
+
+        int count = 0;
+        while (count < list.Count)
+        {
+            print(list[count]);
+            if (list[count] == null)
+                list.RemoveAt(count);
+            else
+                count++;
+        }
     }
 
     void lookForSaves() 
@@ -93,6 +131,9 @@ public class LifeTimeMananger : MonoBehaviour
             PlayerPrefs.SetString("startDay", startDay.ToBinary().ToString());
             print(startDay);
         }
+        /*startDay = startDay.AddDays(0);
+        PlayerPrefs.SetString("startDay", startDay.ToBinary().ToString());
+        print(startDay);*/
     }
     void setCurrentHour()
     {
@@ -116,15 +157,48 @@ public class LifeTimeMananger : MonoBehaviour
                 state_ = State.Morning;
                 break;
             case int i when hour_ >= 12:
-                state_ = State.Noon;
-                break;
-            case int i when hour_ >= 16:
                 state_ = State.Afternoon;
                 break;
-            case int i when hour_ >= 19 || hour_ < 6:
+            case int i when hour_ >= 18 || hour_ < 6:
                 state_ = State.Night;
                 break;
         }
         return state_;
+    }
+
+    void ObjStateManager(State state_)
+    {
+        dayTimeState = state_;
+
+        switch (state_)
+        {
+            case State.Morning:
+                foreach (GameObject item in MorningObj)
+                    item.SetActive(true);
+                foreach (GameObject item in NightObj)
+                    item.SetActive(false);
+                foreach (GameObject item in AfterNoonObj)
+                    item.SetActive(false);
+
+                break;
+            case State.Afternoon:
+                foreach (GameObject item in MorningObj)
+                    item.SetActive(false);
+                foreach (GameObject item in NightObj)
+                    item.SetActive(false);
+                foreach (GameObject item in AfterNoonObj)
+                    item.SetActive(true);
+
+                break;
+            case State.Night:
+                foreach (GameObject item in MorningObj)
+                    item.SetActive(false);
+                foreach (GameObject item in NightObj)
+                    item.SetActive(true);
+                foreach (GameObject item in AfterNoonObj)
+                    item.SetActive(false);
+
+                break;
+        }
     }
 }
