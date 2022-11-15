@@ -52,6 +52,11 @@ public class ScreenshotHandler : MonoBehaviour {
         {
             LoadImg();         
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+        }
     }
 
     private void OnPostRender() {

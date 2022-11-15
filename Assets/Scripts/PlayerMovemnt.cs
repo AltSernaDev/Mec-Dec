@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,13 @@ public class PlayerMovemnt : MonoBehaviour
     private float vertInput;
     [SerializeField] private float speedMultiplier;
     [SerializeField] private float grav;
-    
+    public bool canMove = true;
+    public static PlayerMovemnt playerMoveCode;
+
+    private void Awake()
+    {
+        playerMoveCode = this;
+    }
 
     private void Start()
     {
@@ -23,7 +30,10 @@ public class PlayerMovemnt : MonoBehaviour
 
     private void Update()
     {
-        PlayerMovement();
+        if (canMove)
+        {
+            PlayerMovement();
+        }
 
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {

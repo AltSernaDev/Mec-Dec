@@ -12,6 +12,8 @@ public class CameraControl : MonoBehaviour
     public Transform playerBody;
     public bool canMoveCam = true;
     public static CameraControl camControlCode;
+    private Vector3 left;
+    private Vector3 up;
 
     private void Awake()
     {
@@ -53,7 +55,7 @@ public class CameraControl : MonoBehaviour
             mouseY = 0;
             ClampxAxisRotationToValue(90);
         }
-
+        
         transform.Rotate(Vector3.left * mouseY);
         playerBody.Rotate(Vector3.up * mouseX);
     }

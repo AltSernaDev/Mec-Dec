@@ -25,6 +25,7 @@ public class LevantarCam : MonoBehaviour
                 //canChange = false;
                 camArriba = false;
                 CameraControl.camControlCode.canMoveCam = false;
+                PlayerMovemnt.playerMoveCode.canMove = false;
                 StartCoroutine(waitToMoveCam());
             }
             else
@@ -34,6 +35,7 @@ public class LevantarCam : MonoBehaviour
                 //canChange = false;
                 camArriba = true;
                 CameraControl.camControlCode.canMoveCam = false;
+                PlayerMovemnt.playerMoveCode.canMove = false;
                 StartCoroutine(waitToMoveCam());
 
             }
@@ -43,6 +45,7 @@ public class LevantarCam : MonoBehaviour
         {
             yield return new WaitForSeconds(0.83f);
             CameraControl.camControlCode.canMoveCam = true;
+            PlayerMovemnt.playerMoveCode.canMove = true;
         }
 
         if (!canChange)
