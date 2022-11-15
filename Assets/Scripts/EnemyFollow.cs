@@ -14,8 +14,12 @@ public class EnemyFollow : MonoBehaviour
     private Vector3 target;
     [SerializeField] private bool following = true;
     [SerializeField] private Transform player;
-    
-    
+
+    private void Start()
+    {
+        player = GameObject.FindWithTag("Player").transform;
+    }
+
     void Update()
     {
         if (following)
@@ -34,6 +38,7 @@ public class EnemyFollow : MonoBehaviour
         }
 
     }
+    
 
     private void OnTriggerEnter(Collider other)
     {
