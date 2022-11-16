@@ -53,9 +53,9 @@ public class LifeTimeMananger : MonoBehaviour
             Destroy(this);
         else
             instance = this;
-    }
-    private void Start()
-    {
+
+        //
+
         lookForSaves();
         setCurrentHour();
 
@@ -89,6 +89,7 @@ public class LifeTimeMananger : MonoBehaviour
         CheckObjs();
         //Invoke("CheckObjs", 1);
     }
+
     private void Update()
     {
         if (!manual)
@@ -109,7 +110,6 @@ public class LifeTimeMananger : MonoBehaviour
         int count = 0;
         while (count < list.Count)
         {
-            print(list[count]);
             if (list[count] == null)
                 list.RemoveAt(count);
             else
@@ -131,7 +131,7 @@ public class LifeTimeMananger : MonoBehaviour
             PlayerPrefs.SetString("startDay", startDay.ToBinary().ToString());
             print(startDay);
         }
-        /*startDay = startDay.AddDays(0);
+        /*startDay = startDay.AddDays(1);
         PlayerPrefs.SetString("startDay", startDay.ToBinary().ToString());
         print(startDay);*/
     }

@@ -31,25 +31,39 @@ public class ScreenshotHandler : MonoBehaviour {
 
     private void Awake() {
         instance = this;
+    }
+    private void Start()
+    {
         myCamera = gameObject.GetComponent<Camera>();
         main_ = Camera.main;
         textureCam = myCamera.targetTexture;
 
+        if (PlayerPrefs.HasKey("photoNum"))
+            FileCounter = PlayerPrefs.GetInt("photoNum");
+
         if (reset_)
+        {
             PlayerPrefs.DeleteKey("photoNum");
+        }
+
+        if (FileCounter < LifeTimeMananger.instance.DaysPassed.Days * 3)
+            FileCounter = LifeTimeMananger.instance.DaysPassed.Days * 3;
+
     }
     private void Update()
     {    
-        if (Input.GetKeyDown(KeyCode.Space) && myCamera.gameObject.activeSelf)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (!(LifeTimeMananger.instance.DaysPassed.Days >= (int)(FileCounter / 3)))
+            if (LifeTimeMananger.instance.DaysPassed.Days + 1 > (int)(FileCounter / 3) && LifeTimeMananger.instance.DaysPassed.Days < 3)
             {
+                print(LifeTimeMananger.instance.DaysPassed.Days + 1 + " > " + (int)(FileCounter / 3));
                 TakeScreenshot_Static(500, 500);
                 transform.GetChild(0).gameObject.SetActive(true);
             }
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
+            print("L");
             LoadImg();         
         }
 
@@ -61,10 +75,7 @@ public class ScreenshotHandler : MonoBehaviour {
 
     private void OnPostRender() {
         if (takeScreenshotOnNextFrame) {
-            takeScreenshotOnNextFrame = false;
-            
-            if (PlayerPrefs.HasKey("photoNum")) 
-                FileCounter = PlayerPrefs.GetInt("photoNum");
+            takeScreenshotOnNextFrame = false;          
 
             RenderTexture renderTexture = myCamera.targetTexture;
 
@@ -76,7 +87,7 @@ public class ScreenshotHandler : MonoBehaviour {
 
             Directory.CreateDirectory(Application.streamingAssetsPath + "/Photos");
 
-            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + LifeTimeMananger.instance.CurrentHour.Day.ToString() + "-" + LifeTimeMananger.instance.CurrentHour.Month.ToString() + "-2004_" + (FileCounter + 1) + ".png", byteArray);
+            File.WriteAllBytes(Application.streamingAssetsPath + "/Photos/" + LifeTimeMananger.instance.StartDay.AddDays(LifeTimeMananger.instance.DaysPassed.Days).Day.ToString() + "-" + LifeTimeMananger.instance.StartDay.AddDays(LifeTimeMananger.instance.DaysPassed.Days).Month.ToString() + "-2004_" + (FileCounter + 1) + ".png", byteArray);
             Debug.Log("Saved CameraScreenshot.png");
             FileCounter++;
             PlayerPrefs.SetInt("photoNum", FileCounter);            
@@ -102,10 +113,18 @@ public class ScreenshotHandler : MonoBehaviour {
     {       
         for (int i = 0; i < FileCounter + 1; i++)
         {
-            byte[] byteTemp = File.ReadAllBytes(Application.streamingAssetsPath + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Day) + "-" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Month).ToString() + "-2004_" + (i + 1) + ".png");
-            Texture2D textureTemp = new Texture2D(500, 500);
-            textureTemp.LoadImage(byteTemp);
-            quadArrey.GetChild(i).GetComponent<Renderer>().material.mainTexture = textureTemp;
+                      //print(Application.streamingAssetsPath + "/Photos/" + LifeTimeMananger.instance.CurrentHour.Day.ToString() + "-" + LifeTimeMananger.instance.CurrentHour.Month.ToString() + "-2004_" + (FileCounter + 1) + ".png");
+                      print(Application.streamingAssetsPath + "/Photos/" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Day) + "-" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Month).ToString() + "-2004_" + (i + 1) + ".png");
+            if (File.Exists(Application.streamingAssetsPath + "/Photos/" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Day) + "-" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Month).ToString() + "-2004_" + (i + 1) + ".png"))
+            {
+                print("Si existe");
+                byte[] byteTemp = File.ReadAllBytes(Application.streamingAssetsPath + "/Photos/" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Day) + "-" + (LifeTimeMananger.instance.StartDay.AddDays((int)(i / 3)).Month).ToString() + "-2004_" + (i + 1) + ".png");
+                Texture2D textureTemp = new Texture2D(500, 500);
+                textureTemp.LoadImage(byteTemp);
+                quadArrey.GetChild(i).GetComponent<Renderer>().material.color = Color.white;
+                quadArrey.GetChild(i).GetComponent<Renderer>().material.mainTexture = textureTemp;
+                print("se ''cargo''");
+            }
         }
     }
 
